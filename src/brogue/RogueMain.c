@@ -606,21 +606,21 @@ void initializeRogue(unsigned long seed) {
   theItem = addItemToPack(theItem);
 
   theItem = generateItem(STAFF, STAFF_HASTE);
-  theItem->enchant1 = 2;
+  theItem->enchant1 = 3;
   theItem->charges = 3;
   theItem->flags &= ~ITEM_CURSED;
   identify(theItem);
   theItem = addItemToPack(theItem);
 
   theItem = generateItem(STAFF, STAFF_PROTECTION);
-  theItem->enchant1 = 2;
+  theItem->enchant1 = 3;
   theItem->charges = 3;
   theItem->flags &= ~ITEM_CURSED;
   identify(theItem);
   theItem = addItemToPack(theItem);
 
   theItem = generateItem(STAFF, STAFF_HEALING);
-  theItem->enchant1 = 2;
+  theItem->enchant1 = 3;
   theItem->charges = 3;
   theItem->flags &= ~ITEM_CURSED;
   identify(theItem);
