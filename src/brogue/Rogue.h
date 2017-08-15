@@ -14,7 +14,7 @@
 //
 //  This program is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.m1 garand  See the
 //  GNU Affero General Public License for more details.
 //
 //  You should have received a copy of the GNU Affero General Public License
@@ -988,7 +988,7 @@ enum monsterTypes {
 
 #define NUMBER_MUTATORS             8
 
-#define	NUMBER_HORDES				169
+#define	NUMBER_HORDES				168
 
 #define MONSTER_CLASS_COUNT         13
 
@@ -1247,7 +1247,7 @@ boolean cellHasTerrainFlag(short x, short y, unsigned long flagMask);
 
 // for negative bonuses, take the negative of this
 #define XP_FOR_FULL_REGEN 1000
-#define xpForFullRegen(bonus) ((long) (1000 * XP_FOR_FULL_REGEN * pow(0.75, (abs(bonus)))) + 1000 + FLOAT_FUDGE)
+#define xpForFullRegen(bonus) ((long) ((1000 * XP_FOR_FULL_REGEN * pow(0.75, (abs(bonus)))) + 1000 + FLOAT_FUDGE))
 
 // structs
 

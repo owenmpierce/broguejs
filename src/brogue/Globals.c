@@ -2445,7 +2445,7 @@ itemTable ringTable[NUMBER_RING_KINDS] = {
 	{"wisdom",			itemGems[5], "",	1,	700,	0,{1,3,1}, false, false, "Your staffs will recharge at an accelerated rate in the energy field that radiates from this ring. Cursed rings of wisdom will instead cause your staffs to recharge more slowly."},
     {"reaping",         itemGems[6], "",	1,	700,	0,{1,3,1}, false, false, "The blood magic in this ring will recharge your staffs and charms in proportion to the damage you inflict directly. Cursed rings of reaping will drain your staffs and charms when you inflict damage directly."},
   {"inspiration",         itemGems[7], "",	1,	700,	0,{1,3,1}, false, false, "The more area of the dungeon that is directly revealed to you while wearing this ring, the faster your staffs and charms will recharge.  Cursed rings of inspiration will drain your staffs and charms accordingly."},
-  {"perseverance",         itemGems[8], "",	1,	700,	0,{1,3,1}, false, false, "Wearing this ring will immediately heal you in proportion to the amount of area of the dungeon that you see or sense.  A cursed ring will likewise immediately injure you until your health drops below some percentage based on enchantment level."},
+  {"perseverance",         itemGems[8], "",	1,	700,	0,{1,3,1}, false, false, "Wearing this ring will immediately heal you in proportion to the amount of area of the dungeon that you see or sense.  A cursed ring will likewise immediately injure you until half-health."},
 };
 
 itemTable charmTable[NUMBER_CHARM_KINDS] = {
