@@ -27,6 +27,8 @@
 #include <time.h>
 
 void rogueMain() {
+  createMonsterDepthMap();
+
 	previousGameSeed = 0;
 	initializeBrogueSaveLocation();
 	mainBrogueJunction();
@@ -409,6 +411,7 @@ void initializeRogue(unsigned long seed) {
 	rogue.mapToShore = NULL;
 	rogue.cursorLoc[0] = rogue.cursorLoc[1] = -1;
 	rogue.xpxpThisTurn = 0;
+  rogue.xpxpInter = 0;
     
     rogue.yendorWarden = NULL;
     
@@ -418,7 +421,8 @@ void initializeRogue(unsigned long seed) {
 	rogue.minersLight = lightCatalog[MINERS_LIGHT];
 	
 	rogue.clairvoyance = rogue.regenerationBonus
-	= rogue.stealthBonus = rogue.transference = rogue.wisdomBonus = rogue.reaping = 0;
+	= rogue.stealthBonus = rogue.transference = rogue.wisdomBonus = rogue.reaping =
+    rogue.inspiration = rogue.perseverance = 0;
 	rogue.lightMultiplier = 1;
 	
 	theItem = generateItem(FOOD, RATION);
@@ -474,14 +478,14 @@ void initializeRogue(unsigned long seed) {
 		
 		theItem = generateItem(STAFF, STAFF_FIRE);
 		theItem->enchant1 = 10;
-		theItem->charges = 300;
+		theItem->charges = 10; // 300;
 		theItem->flags &= ~ITEM_CURSED;
 		identify(theItem);
 		theItem = addItemToPack(theItem);
 		
 		theItem = generateItem(STAFF, STAFF_LIGHTNING);
 		theItem->enchant1 = 10;
-		theItem->charges = 300;
+		theItem->charges = 10; // 300;
 		theItem->flags &= ~ITEM_CURSED;
 		identify(theItem);
 		theItem = addItemToPack(theItem);
@@ -499,6 +503,7 @@ void initializeRogue(unsigned long seed) {
 		identify(theItem);
 		theItem = addItemToPack(theItem);
 		
+#if 0
 		theItem = generateItem(STAFF, STAFF_OBSTRUCTION);
 		theItem->enchant1 = 10;
 		theItem->charges = 300;
@@ -561,8 +566,9 @@ void initializeRogue(unsigned long seed) {
 		theItem->flags &= ~ITEM_CURSED;
 		identify(theItem);
 		theItem = addItemToPack(theItem);
+#endif
 		
-		theItem = generateItem(RING, RING_AWARENESS);
+		theItem = generateItem(RING, RING_PERCEPTION);
 		theItem->enchant1 = 30;
 		theItem->flags &= ~ITEM_CURSED;
 		identify(theItem);
@@ -574,6 +580,55 @@ void initializeRogue(unsigned long seed) {
 //			theItem = addItemToPack(theItem);
 //		}
 	}
+
+  theItem = generateItem(RING, RING_INSPIRATION);
+  theItem->enchant1 = 2;
+  theItem->flags &= ~ITEM_CURSED;
+  identify(theItem);
+  theItem = addItemToPack(theItem);
+
+  theItem = generateItem(RING, RING_PERSEVERANCE);
+  theItem->enchant1 = 2;
+  theItem->flags &= ~ITEM_CURSED;
+  identify(theItem);
+  theItem = addItemToPack(theItem);
+
+  theItem = generateItem(RING, RING_PERCEPTION);
+  theItem->enchant1 = 2;
+  theItem->flags &= ~ITEM_CURSED;
+  identify(theItem);
+  theItem = addItemToPack(theItem);
+
+  theItem = generateItem(RING, RING_INSPIRATION);
+  theItem->enchant1 = -2;
+  theItem->flags &= ~ITEM_CURSED;
+  identify(theItem);
+  theItem = addItemToPack(theItem);
+
+  theItem = generateItem(RING, RING_PERSEVERANCE);
+  theItem->enchant1 = -2;
+  theItem->flags &= ~ITEM_CURSED;
+  identify(theItem);
+  theItem = addItemToPack(theItem);
+
+  theItem = generateItem(STAFF, STAFF_HASTE);
+  theItem->enchant1 = 2;
+  theItem->flags &= ~ITEM_CURSED;
+  identify(theItem);
+  theItem = addItemToPack(theItem);
+
+  theItem = generateItem(STAFF, STAFF_PROTECTION);
+  theItem->enchant1 = 2;
+  theItem->flags &= ~ITEM_CURSED;
+  identify(theItem);
+  theItem = addItemToPack(theItem);
+
+  theItem = generateItem(STAFF, STAFF_HEALING);
+  theItem->enchant1 = 2;
+  theItem->flags &= ~ITEM_CURSED;
+  identify(theItem);
+  theItem = addItemToPack(theItem);
+
 	blackOutScreen();
 	welcome();
 }
@@ -895,6 +950,7 @@ void startLevel(short oldLevelNumber, short stairDirection) {
                 }
             }
         }
+        consumeXPXPInter();
 	}
 	if (cellHasTerrainFlag(player.xLoc, player.yLoc, T_IS_DEEP_WATER) && !player.status[STATUS_LEVITATING]
 		&& !cellHasTerrainFlag(player.xLoc, player.yLoc, (T_ENTANGLES | T_OBSTRUCTS_PASSABILITY))) {

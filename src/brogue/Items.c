@@ -2283,6 +2283,9 @@ void itemDetails(char *buf, item *theItem) {
                             case A_IMMOLATION:
 								strcpy(buf2, "10% of the time it absorbs a blow, it will explode in flames. ");
 								break;
+            case A_RETENTION:
+              strcpy(buf2, "While it is worn, it will secure your items, safeguarding them from thieves and preventing them from floating away in deep water.");
+              break;
 							default:
 								break;
 						}
@@ -3304,6 +3307,7 @@ void aggravateMonsters(short distance, short x, short y, const color *flashColor
         if (!playerCanSee(x, y)) {
             message("You hear a piercing shriek; something must have triggered a nearby alarm.", false);
         }
+        consumeXPXPInter();
     }
 }
 
@@ -3624,6 +3628,7 @@ boolean polymorph(creature *monst) {
 	do {
         newMonsterIndex = rand_range(1, NUMBER_MONSTER_KINDS - 1);
 	} while (monsterCatalog[newMonsterIndex].flags & (MONST_INANIMATE | MONST_NO_POLYMORPH) // Can't turn something into an inanimate object or lich/phoenix/warden.
+           || monsterMinLevels[newMonsterIndex] > monst->spawnDepth // Must convert monster to one of lesser-or-equal spawning level
              || newMonsterIndex == monst->info.monsterID); // Can't stay the same monster.
     monst->info = monsterCatalog[newMonsterIndex]; // Presto change-o!
 	
@@ -4799,12 +4804,12 @@ boolean zap(short originLoc[2], short targetLoc[2], bolt *theBolt, boolean hideD
             y2 = listOfCoordinates[i+1][1];
 			if (cellHasTerrainFlag(x2, y2, (T_OBSTRUCTS_VISION | T_OBSTRUCTS_PASSABILITY))
                 && (projectileReflects(shootingMonst, NULL)
-                    || cellHasTMFlag(x2, y2, TM_REFLECTS_BOLTS)
+                    || cellHasTMFlag(x2, y2, (TM_REFLECTS_BOLTS | TM_REFLECT_4))
                     || (theBolt->boltEffect == BE_TUNNELING && (pmap[x2][y2].flags & IMPREGNABLE)))
                 && i < MAX_BOLT_LENGTH - max(DCOLS, DROWS)) {
                 
                 sprintf(buf, "the bolt reflects off of %s", tileText(x2, y2));
-                if (projectileReflects(shootingMonst, NULL)) {
+                if (projectileReflects(shootingMonst, NULL) || cellHasTMFlag(x2, y2, TM_REFLECT_4)) {
                     // If it scores another reflection roll, reflect at caster, unless it's already reflected.
                     numCells = reflectBolt(originLoc[0], originLoc[1], listOfCoordinates, i, !alreadyReflected);
                 } else {
@@ -7195,8 +7200,8 @@ void equipItem(item *theItem, boolean force) {
 			updateClairvoyance();
 			displayLevel();
             identifyItemKind(theItem);
-		} else if (theItem->kind == RING_LIGHT
-                   || theItem->kind == RING_STEALTH) {
+		} else if (theItem->kind == RING_PERCEPTION ||
+               theItem->kind == RING_STEALTH) {
             identifyItemKind(theItem);
 		}
 	}
@@ -7247,7 +7252,8 @@ void updateRingBonuses() {
 	item *rings[2] = {rogue.ringLeft, rogue.ringRight};
 	
 	rogue.clairvoyance = rogue.stealthBonus = rogue.transference
-	= rogue.awarenessBonus = rogue.regenerationBonus = rogue.wisdomBonus = rogue.reaping = 0;
+	= rogue.awarenessBonus = rogue.regenerationBonus = rogue.wisdomBonus = rogue.reaping =
+    rogue.inspiration = rogue.perseverance = 0;
 	rogue.lightMultiplier = 1;
 	
 	for (i=0; i<= 1; i++) {
@@ -7265,23 +7271,27 @@ void updateRingBonuses() {
 				case RING_TRANSFERENCE:
 					rogue.transference += effectiveRingEnchant(rings[i]);
 					break;
-				case RING_LIGHT:
-					rogue.lightMultiplier += effectiveRingEnchant(rings[i]);
-					break;
-				case RING_AWARENESS:
-					rogue.awarenessBonus += 20 * effectiveRingEnchant(rings[i]);
-					break;
-				case RING_WISDOM:
-					rogue.wisdomBonus += effectiveRingEnchant(rings[i]);
-                    break;
-                case RING_REAPING:
-                    rogue.reaping += effectiveRingEnchant(rings[i]);
-					break;
-			}
-		}
-	}
-	
-	if (rogue.lightMultiplier <= 0) {
+      case RING_PERCEPTION:
+          rogue.lightMultiplier += effectiveRingEnchant(rings[i]);
+          rogue.awarenessBonus += 20 * effectiveRingEnchant(rings[i]);
+          break;
+      case RING_WISDOM:
+        rogue.wisdomBonus += effectiveRingEnchant(rings[i]);
+        break;
+      case RING_REAPING:
+        rogue.reaping += effectiveRingEnchant(rings[i]);
+        break;
+      case RING_INSPIRATION:
+        rogue.inspiration += effectiveRingEnchant(rings[i]);
+        break;
+      case RING_PERSEVERANCE:
+        rogue.perseverance += effectiveRingEnchant(rings[i]);
+        break;
+      }
+    }
+  }
+  
+  if (rogue.lightMultiplier <= 0) {
 		rogue.lightMultiplier--; // because it starts at positive 1 instead of 0
 	}
 	

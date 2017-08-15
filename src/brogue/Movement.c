@@ -1065,6 +1065,7 @@ boolean playerMoves(short direction) {
                     alreadyRecorded = true;
                 }
                 discoverCell(newX, newY);
+                consumeXPXPInter();
                 refreshDungeonCell(newX, newY);
             }
 			messageWithColor(tileCatalog[i].flavorText, &backgroundMessageColor, false);
@@ -2171,7 +2172,8 @@ void updateFieldOfViewDisplay(boolean updateDancingTerrain, boolean refreshDispl
 			} else if (!(pmap[i][j].flags & WAS_TELEPATHIC_VISIBLE) && (pmap[i][j].flags & TELEPATHIC_VISIBLE)) { // became telepathically visible
                 if (!(pmap[i][j].flags & DISCOVERED)
 					&& !cellHasTerrainFlag(i, j, T_PATHING_BLOCKER)) {
-					rogue.xpxpThisTurn++;
+                  // rogue.xpxpThisTurn++;
+                  addTurnXPXP(1);
                 }
 
 				pmap[i][j].flags &= ~STABLE_MEMORY;
@@ -2206,6 +2208,7 @@ void updateFieldOfViewDisplay(boolean updateDancingTerrain, boolean refreshDispl
 								  }
 		}
 	}
+  consumeXPXPInter();
 	restoreRNG;
 }
 
@@ -2358,4 +2361,56 @@ void addScentToCell(short x, short y, short distance) {
         value = rogue.scentTurnNumber - distance;
 		scentMap[x][y] = max(value, (unsigned short) scentMap[x][y]);
 	}
+}
+
+void addTurnXPXP(unsigned short xp) {
+  
+  rogue.xpxpThisTurn += xp;
+  rogue.xpxpInter += xp;
+}
+
+void consumeXPXPInter() {
+
+  if (rogue.xpxpInter) {
+    // Apply ring bonuses
+    if (rogue.inspiration) {
+      rechargeItemsIncrementally(rogue.xpxpInter * rogue.inspiration / 2);
+    }
+
+    if (rogue.perseverance) {
+      long mXP = rogue.xpxpInter * 1000;  // milliXP
+      long mXPperHP = xpForFullRegen(rogue.perseverance) / player.info.maxHP;
+      short hp = mXP / mXPperHP;
+      long mXPRem = mXP % mXPperHP;
+
+      // if the accumulator capacity (mXPperHP) changing from last turn caused overflow
+      // give a bonus HP
+      if (rogue.perseveranceAccum >= mXPperHP) {
+        rogue.perseveranceAccum -= mXPperHP;
+        hp += rogue.perseverance > 0 ? 1 : -1;
+      }
+
+      if (rogue.perseverance > 0) {
+        if ((rogue.perseveranceAccum += mXPRem) > mXPperHP) {
+          rogue.perseveranceAccum -= mXPperHP;
+          hp++;
+        }
+        player.currentHP += hp;
+        player.currentHP = min(player.currentHP, player.info.maxHP);
+      } else if (player.currentHP >= player.info.maxHP / 2) {
+        // Can't fall lower than half health with cursed ring
+        if ((rogue.perseveranceAccum -= mXPRem) < 0) {
+          rogue.perseveranceAccum += mXPperHP;
+          hp++;
+        }
+        player.currentHP -= hp;
+        player.currentHP = clamp(player.currentHP, player.info.maxHP / 2, player.info.maxHP);
+      }
+      DEBUG printf("\nmXP: %i, hp: %s%i, mXPRem: %i, mXPperHP: %i, pAccum: %i", mXP, rogue.perseverance<0? "-":"", hp, mXPRem, mXPperHP, rogue.perseveranceAccum);
+    } else {
+      // Take off the ring and you lose the effect
+      rogue.perseveranceAccum = 0;
+    }
+    rogue.xpxpInter = 0;
+  }
 }

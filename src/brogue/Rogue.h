@@ -602,6 +602,8 @@ enum tileType {
     MUD_FLOOR,
     MUD_WALL,
     MUD_DOORWAY,
+
+  MAGIC_MIRROR,
     
 	NUMBER_TILETYPES,
 };
@@ -785,6 +787,7 @@ enum armorEnchants {
 	A_REFLECTION,
     A_RESPIRATION,
     A_DAMPENING,
+  A_RETENTION,
 	A_BURDEN,
 	NUMBER_GOOD_ARMOR_ENCHANT_KINDS = A_BURDEN,
 	A_VULNERABILITY,
@@ -801,7 +804,7 @@ enum wandKind {
 	WAND_BECKONING,
 	WAND_PLENTY,
 	WAND_INVISIBILITY,
-    WAND_EMPOWERMENT,
+  //WAND_EMPOWERMENT,
 	NUMBER_WAND_KINDS
 };
 
@@ -862,10 +865,11 @@ enum ringKind {
 	RING_STEALTH,
 	RING_REGENERATION,
 	RING_TRANSFERENCE,
-	RING_LIGHT,
-	RING_AWARENESS,
+  RING_PERCEPTION,
 	RING_WISDOM,
-    RING_REAPING,
+  RING_REAPING,
+  RING_INSPIRATION,
+  RING_PERSEVERANCE,
 	NUMBER_RING_KINDS
 };
 
@@ -984,7 +988,7 @@ enum monsterTypes {
 
 #define NUMBER_MUTATORS             8
 
-#define	NUMBER_HORDES				168
+#define	NUMBER_HORDES				169
 
 #define MONSTER_CLASS_COUNT         13
 
@@ -1213,6 +1217,9 @@ boolean cellHasTerrainFlag(short x, short y, unsigned long flagMask);
 
 #define ringWisdomMultiplier(enchant)       (int) (10 * pow(1.3, min(27, (enchant))) + FLOAT_FUDGE)
 
+#define ringPerserveranceMultiplier(enchant) ((int) FLOAT_FUDGE)
+#define ringPerserveranceMaxInjury(enchant) ((int) FLOAT_FUDGE)
+
 #define charmHealing(enchant)               ((int) (clamp(20 * (enchant), 0, 100) + FLOAT_FUDGE))
 #define charmProtection(enchant)			((int) (150 * pow(1.35, (double) (enchant) - 1) + FLOAT_FUDGE))
 #define charmShattering(enchant)            ((int) (4 + (enchant) + FLOAT_FUDGE))
@@ -1237,6 +1244,10 @@ boolean cellHasTerrainFlag(short x, short y, unsigned long flagMask);
 #define turnsForFullRegen(bonus)			((long) (1000 * TURNS_FOR_FULL_REGEN * pow(0.75, (bonus)) + 2000 + FLOAT_FUDGE))
 											// This will max out at full regeneration in about two turns.
 											// This is the Syd nerf, after Syd broke the game over his knee with a +18 ring of regeneration.
+
+// for negative bonuses, take the negative of this
+#define XP_FOR_FULL_REGEN 1000
+#define xpForFullRegen(bonus) ((long) (1000 * XP_FOR_FULL_REGEN * pow(0.75, (abs(bonus)))) + 1000 + FLOAT_FUDGE)
 
 // structs
 
@@ -1879,6 +1890,7 @@ enum terrainMechanicalFlagCatalog {
     TM_INTERRUPT_EXPLORATION_WHEN_SEEN = Fl(21),    // will generate a message when discovered during exploration to interrupt exploration
     TM_INVERT_WHEN_HIGHLIGHTED      = Fl(22),       // will flip fore and back colors when highlighted with pathing
     TM_SWAP_ENCHANTS_ACTIVATION     = Fl(23),       // in machine, swap item enchantments when two suitable items are on this terrain, and activate the machine when that happens
+    TM_REFLECT_4                    = Fl(24),       // reflects projectiles as though wearing +4 armor of reflection
 };
 
 enum statusEffects {
@@ -2252,6 +2264,8 @@ typedef struct playerCharacter {
     unsigned long absoluteTurnNumber;   // number of turns since the beginning of time. Always increments.
 	signed long milliseconds;			// milliseconds since launch, to decide whether to engage cautious mode
 	short xpxpThisTurn;					// how many squares the player explored this turn
+  short xpxpInter;            // xpxp that can be consumed more frequently than every turn
+  long perseveranceAccum;   // leftover XP that will be counted towards the next hitpoint
     short aggroRange;                   // distance from which monsters will notice you
     
 	short previousHealthPercent;        // remembers what your health proportion was at the start of the turn,
@@ -2301,7 +2315,9 @@ typedef struct playerCharacter {
 	short awarenessBonus;
 	short transference;
 	short wisdomBonus;
-    short reaping;
+  short reaping;
+  short inspiration;
+  short perseverance;
     
     // feats:
     boolean featRecord[FEAT_COUNT];
@@ -2524,7 +2540,7 @@ typedef struct autoGenerator {
 	short maxNumber;
 } autoGenerator;
 
-#define NUMBER_AUTOGENERATORS 49
+#define NUMBER_AUTOGENERATORS 50
 
 typedef struct feat {
 	char name[100];
@@ -2923,6 +2939,9 @@ extern "C" {
                       const creature *attacker, creature *defender,
                       const boolean penetrate, const boolean sweep);
 	void addScentToCell(short x, short y, short distance);
+  void addTurnXPXP(unsigned short xp);
+  void consumeXPXPInter();
+
 	void populateItems(short upstairsX, short upstairsY);
 	item *placeItem(item *theItem, short x, short y);
 	void removeItemFrom(short x, short y);
@@ -3043,6 +3062,7 @@ extern "C" {
 	void toggleMonsterDormancy(creature *monst);
 	void monsterDetails(char buf[], creature *monst);
 	void makeMonsterDropItem(creature *monst);
+  void createMonsterDepthMap();
 	void throwCommand(item *theItem);
     void relabel(item *theItem);
 	void apply(item *theItem, boolean recordCommands);

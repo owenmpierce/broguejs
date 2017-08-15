@@ -4313,3 +4313,27 @@ void monsterDetails(char buf[], creature *monst) {
 	}
 	resolvePronounEscapes(buf, monst);
 }
+
+void createMonsterDepthMap() {
+
+  for (int i = 0; i < NUMBER_MONSTER_KINDS; i++) {
+    monsterMinLevels[i] = DEEPEST_LEVEL + 1;
+  }
+
+  for (int i = 0; i < NUMBER_HORDES; i++) {
+
+    // We only want monsters from "normal" hordes; no summons, captives, legendaries, etc
+    if (hordeCatalog[i].flags)
+      continue;
+
+    monsterMinLevels[hordeCatalog[i].leaderType] =
+      min(monsterMinLevels[hordeCatalog[i].leaderType], hordeCatalog[i].minLevel);
+
+    /*
+      for (int j = 0; j < hordeCatalog[i].numberOfMemberTypes; j++) {
+      monsterMinLevels[hordeCatalog[i].memberType[j]] =
+      min(monsterMinLevels[hordeCatalog[i].memberType[j]], hordeCatalog[i].minLevel);
+      }
+    */
+  }
+}

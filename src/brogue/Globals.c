@@ -430,6 +430,9 @@ const autoGenerator autoGeneratorCatalog[NUMBER_AUTOGENERATORS] = {
 	{0,							0,		0,							MT_TRICK_STATUE_AREA,		FLOOR,		NOTHING,    6,		DEEPEST_LEVEL-1,15,		0,		0,			3},
 	{0,							0,		0,							MT_SENTINEL_AREA,			FLOOR,		NOTHING,    12,		DEEPEST_LEVEL-1,10,		0,		0,			2},
 	{0,							0,		0,							MT_WORM_AREA,				FLOOR,		NOTHING,    12,		DEEPEST_LEVEL-1,12,		0,		0,			3},
+
+  // Magic Mirror
+  {MAGIC_MIRROR,         DUNGEON, DF_CARPET_AREA,             0,               FLOOR,    NOTHING,    4,    DEEPEST_LEVEL-1, 50,  0,    0,      1},
 };
 
 #pragma mark Terrain definitions
@@ -685,6 +688,9 @@ const floorTileType tileCatalog[NUMBER_TILETYPES] = {
     {FLOOR_CHAR,    &mudBackColor,          &refuseBackColor,       85,	0,	DF_STENCH_SMOLDER,0,		0,				0,				NO_LIGHT,		(T_IS_FLAMMABLE), (TM_VANISHES_UPON_PROMOTION),                                                     "the mud floor",		"Rotting animal matter has been ground into the mud floor; the stench is awful."},
     {WALL_CHAR,		&mudWallForeColor,		&mudWallBackColor,		0,	0,	DF_PLAIN_FIRE,	0,			0,				0,				NO_LIGHT,		(T_OBSTRUCTS_EVERYTHING), (TM_STAND_IN_TILE),														"a mud-covered wall",	"A malodorous layer of clay and fecal matter coats the wall."},
     {OMEGA_CHAR,	&mudWallForeColor,      &refuseBackColor,		25,	50,	DF_EMBERS,		0,			0,              0,				NO_LIGHT,		(T_OBSTRUCTS_VISION | T_OBSTRUCTS_GAS | T_IS_FLAMMABLE), (TM_STAND_IN_TILE | TM_VISUALLY_DISTINCT), "hanging animal skins",	"you push through the animal skins that hang across the threshold."},
+
+  // magic mirror
+  {THETA_CHAR,    &rainbow,          &lightBlue,       0,	0,	DF_PLAIN_FIRE, 0,		0,				0,				NO_LIGHT,		(T_OBSTRUCTS_PASSABILITY | T_OBSTRUCTS_VISION | T_OBSTRUCTS_ITEMS | T_OBSTRUCTS_GAS | T_OBSTRUCTS_SURFACE_EFFECTS), (TM_REFLECT_4 | TM_LIST_IN_SIDEBAR),                                                     "a magic mirror",		"The magic mirror reflects your weary gaze, and what else?"},
 };
 
 #pragma mark Dungeon Feature definitions
@@ -1114,7 +1120,7 @@ const blueprint blueprintCatalog[NUMBER_BLUEPRINTS] = {
 	{{1, 12},           {30, 50},	30,		6,			0,                  (BP_ROOM | BP_PURGE_INTERIOR | BP_SURROUND_WITH_WALLS | BP_OPEN_INTERIOR | BP_IMPREGNABLE | BP_REWARD),	{
 		{0,			CARPET,		DUNGEON,		{0,0},		0,			0,			-1,			0,				0,				0,			0,			(MF_EVERYWHERE)},
 		{0,			0,          0,              {1,1},		1,			0,          0,          0,				2,				0,			0,          (MF_BUILD_AT_ORIGIN | MF_PERMIT_BLOCKING | MF_BUILD_VESTIBULE)},
-		{0,			ALTAR_CAGE_OPEN,DUNGEON,	{1,1},		1,			WAND,       WAND_EMPOWERMENT, 0,		2,				0,			(ITEM_IS_KEY | ITEM_KIND_AUTO_ID | ITEM_PLAYER_AVOIDS),	(MF_GENERATE_ITEM | MF_TREAT_AS_BLOCKING | MF_IMPREGNABLE)},
+		// {0,			ALTAR_CAGE_OPEN,DUNGEON,	{1,1},		1,			WAND,       WAND_EMPOWERMENT, 0,		2,				0,			(ITEM_IS_KEY | ITEM_KIND_AUTO_ID | ITEM_PLAYER_AVOIDS),	(MF_GENERATE_ITEM | MF_TREAT_AS_BLOCKING | MF_IMPREGNABLE)},
         {0,			ALTAR_CAGE_OPEN,DUNGEON,	{3,3},		3,			(WEAPON|ARMOR|WAND),-1,	0,				2,				0,			(ITEM_IS_KEY | ITEM_KIND_AUTO_ID | ITEM_PLAYER_AVOIDS),	(MF_GENERATE_ITEM | MF_NO_THROWING_WEAPONS | MF_TREAT_AS_BLOCKING | MF_IMPREGNABLE)},
 		{0,			ALTAR_CAGE_OPEN,DUNGEON,	{2,3},		2,			(STAFF|RING|CHARM),-1,	0,				2,				0,			(ITEM_IS_KEY | ITEM_KIND_AUTO_ID | ITEM_MAX_CHARGES_KNOWN | ITEM_PLAYER_AVOIDS),	(MF_GENERATE_ITEM | MF_NO_THROWING_WEAPONS | MF_TREAT_AS_BLOCKING | MF_IMPREGNABLE)},
         {0,			STATUE_INERT,DUNGEON,		{2,3},		0,			0,			-1,			0,				2,				0,          0,          (MF_TREAT_AS_BLOCKING | MF_BUILD_IN_WALLS | MF_IMPREGNABLE)}}},
@@ -2361,6 +2367,7 @@ const char armorRunicNames[NUMBER_ARMOR_ENCHANT_KINDS][30] = {
 	"reflection",
     "respiration",
     "dampening",
+  "retention",
 	"burden",
 	"vulnerability",
     "immolation",
@@ -2411,7 +2418,7 @@ itemTable wandTable[NUMBER_WAND_KINDS] = {
 	{"beckoning",		itemMetals[5], "",	3,	500,	BOLT_BECKONING,     {2,4,1}, false, false, "The force of this wand will yank the targeted creature into direct proximity."},
 	{"plenty",			itemMetals[6], "",	2,	700,	BOLT_PLENTY,        {1,2,1}, false, false, "The creature at the other end of this mischievous bit of metal will be beside itself -- literally! Cloning an enemy is ill-advised, but the effect can be invaluable on a powerful ally."},
 	{"invisibility",	itemMetals[7], "",	3,	100,	BOLT_INVISIBILITY,  {3,5,1}, false, false, "A charge from this wand will render a creature temporarily invisible to the naked eye. Only with telepathy or in the silhouette of a thick gas will an observer discern the creature's hazy outline."},
-    {"empowerment",     itemMetals[8], "",	2,	100,	BOLT_EMPOWERMENT,   {1,1,1}, false, false, "This sacred magic will permanently improve the mind and body of any monster it hits. A wise adventurer will use it on allies, making them stronger in combat and able to learn a new talent from a fallen foe. If the bolt is reflected back at you, it will have no effect."},
+  // {"empowerment",     itemMetals[8], "",	2,	100,	BOLT_EMPOWERMENT,   {1,1,1}, false, false, "This sacred magic will permanently improve the mind and body of any monster it hits. A wise adventurer will use it on allies, making them stronger in combat and able to learn a new talent from a fallen foe. If the bolt is reflected back at you, it will have no effect."},
 };
 
 itemTable staffTable[NUMBER_STAFF_KINDS] = {
@@ -2434,10 +2441,11 @@ itemTable ringTable[NUMBER_RING_KINDS] = {
 	{"stealth",			itemGems[1], "",	1,	800,	0,{1,3,1}, false, false, "This ring will reduce your stealth range, making enemies less likely to notice you and more likely to lose your trail. Staying motionless and lurking in the shadows will make you even harder to spot. Cursed rings of stealth will increase your stealth range, making you easier to spot and to track."},
 	{"regeneration",	itemGems[2], "",	1,	750,	0,{1,3,1}, false, false, "This ring increases the body's regenerative properties, allowing one to recover lost health at an accelerated rate. Cursed rings will decrease or even halt one's natural regeneration."},
 	{"transference",	itemGems[3], "",	1,	750,	0,{1,3,1}, false, false, "Landing a melee attack while wearing this ring will heal you in proportion to the damage inflicted. Cursed rings will cause you to lose health with each attack you land."},
-	{"light",			itemGems[4], "",	1,	600,	0,{1,3,1}, false, false, "This ring subtly enhances your vision, enabling you to see farther in the dimming light of the deeper dungeon levels. It will not make you more visible to enemies."},
-	{"awareness",		itemGems[5], "",	1,	700,	0,{1,3,1}, false, false, "Wearing this ring will enable you to notice hidden secrets (traps, secret doors and hidden levers) more often and from a greater distance. Cursed rings of awareness will dull your senses, making it harder to notice secrets even when actively searching for them."},
-	{"wisdom",			itemGems[6], "",	1,	700,	0,{1,3,1}, false, false, "Your staffs will recharge at an accelerated rate in the energy field that radiates from this ring. Cursed rings of wisdom will instead cause your staffs to recharge more slowly."},
-    {"reaping",         itemGems[7], "",	1,	700,	0,{1,3,1}, false, false, "The blood magic in this ring will recharge your staffs and charms in proportion to the damage you inflict directly. Cursed rings of reaping will drain your staffs and charms when you inflict damage directly."},
+	{"perception",			itemGems[4], "",	1,	700,	0,{1,3,1}, false, false, "This ring subtly enhances your vision, enabling you to see farther in the dimming light of the deeper dungeon levels. It will also enable you to notice hidden secrets (traps, secret doors, and hidden levers). It will not make you more visible to enemies."},
+	{"wisdom",			itemGems[5], "",	1,	700,	0,{1,3,1}, false, false, "Your staffs will recharge at an accelerated rate in the energy field that radiates from this ring. Cursed rings of wisdom will instead cause your staffs to recharge more slowly."},
+    {"reaping",         itemGems[6], "",	1,	700,	0,{1,3,1}, false, false, "The blood magic in this ring will recharge your staffs and charms in proportion to the damage you inflict directly. Cursed rings of reaping will drain your staffs and charms when you inflict damage directly."},
+  {"inspiration",         itemGems[7], "",	1,	700,	0,{1,3,1}, false, false, "The more area of the dungeon that is directly revealed to you while wearing this ring, the faster your staffs and charms will recharge.  Cursed rings of inspiration will drain your staffs and charms accordingly."},
+  {"perseverance",         itemGems[8], "",	1,	700,	0,{1,3,1}, false, false, "Wearing this ring will immediately heal you in proportion to the amount of area of the dungeon that you see or sense.  A cursed ring will likewise immediately injure you until your health drops below some percentage based on enchantment level."},
 };
 
 itemTable charmTable[NUMBER_CHARM_KINDS] = {
@@ -2580,3 +2588,5 @@ const char monsterBookkeepingFlagDescriptions[32][COLS] = {
 	"",											// MB_WILL_FLASH
 	"is anchored to reality by $HISHER summoner",// MB_BOUND_TO_LEADER
 };
+
+int monsterMinLevels[NUMBER_MONSTER_KINDS];

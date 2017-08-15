@@ -232,3 +232,5 @@ extern const char armorRunicNames[NUMBER_ARMOR_ENCHANT_KINDS][30];
 extern const char monsterBehaviorFlagDescriptions[32][COLS];
 extern const char monsterAbilityFlagDescriptions[32][COLS];
 extern const char monsterBookkeepingFlagDescriptions[32][COLS];
+
+extern int monsterMinLevels[NUMBER_MONSTER_KINDS];

@@ -402,34 +402,46 @@ void specialHit(creature *attacker, creature *defender, short damage) {
 						}
 					}
 				}
-				if (theItem) {
-                    if (theItem->category & WEAPON) { // Monkeys will steal half of a stack of weapons, and one of any other stack.
-                        if (theItem->quantity > 3) {
-                            stolenQuantity = (theItem->quantity + 1) / 2;
-                        } else {
-                            stolenQuantity = theItem->quantity;
-                        }
-                    } else {
-                        stolenQuantity = 1;
-                    }
-					if (stolenQuantity < theItem->quantity) { // Peel off stolen item(s).
-						itemFromTopOfStack = generateItem(ALL_ITEMS, -1);
-						*itemFromTopOfStack = *theItem; // Clone the item.
-						theItem->quantity -= stolenQuantity;
-						itemFromTopOfStack->quantity = stolenQuantity;
-						theItem = itemFromTopOfStack; // Redirect pointer.
-					} else {
-						removeItemFromChain(theItem, packItems);
-					}
-					theItem->flags &= ~ITEM_PLAYER_AVOIDS; // Explore will seek the item out if it ends up on the floor again.
-					attacker->carriedItem = theItem;
-					attacker->creatureMode = MODE_PERM_FLEEING;
-					attacker->creatureState = MONSTER_FLEEING;
-					monsterName(buf2, attacker, true);
-					itemName(theItem, buf3, false, true, NULL);
-					sprintf(buf, "%s stole %s!", buf2, buf3);
-					messageWithColor(buf, &badMessageColor, false);
-				}
+        if (theItem) {
+          if (rogue.armor && (rogue.armor->flags & ITEM_RUNIC) && rogue.armor->enchant2 == A_RETENTION) {
+
+            monsterName(buf2, attacker, true);
+            itemName(theItem, buf3, false, true, NULL);
+            sprintf(buf, "%s tried to steal %s, but it is magically secured to your person!", buf2, buf3);
+            message(buf, false);
+            if (!(rogue.armor->flags & ITEM_RUNIC_IDENTIFIED)) {
+              autoIdentify(rogue.armor);
+            }
+
+          } else {
+            if (theItem->category & WEAPON) { // Monkeys will steal half of a stack of weapons, and one of any other stack.
+              if (theItem->quantity > 3) {
+                stolenQuantity = (theItem->quantity + 1) / 2;
+              } else {
+                stolenQuantity = theItem->quantity;
+              }
+            } else {
+              stolenQuantity = 1;
+            }
+            if (stolenQuantity < theItem->quantity) { // Peel off stolen item(s).
+              itemFromTopOfStack = generateItem(ALL_ITEMS, -1);
+              *itemFromTopOfStack = *theItem; // Clone the item.
+              theItem->quantity -= stolenQuantity;
+              itemFromTopOfStack->quantity = stolenQuantity;
+              theItem = itemFromTopOfStack; // Redirect pointer.
+            } else {
+              removeItemFromChain(theItem, packItems);
+            }
+            theItem->flags &= ~ITEM_PLAYER_AVOIDS; // Explore will seek the item out if it ends up on the floor again.
+            attacker->carriedItem = theItem;
+            attacker->creatureMode = MODE_PERM_FLEEING;
+            attacker->creatureState = MONSTER_FLEEING;
+            monsterName(buf2, attacker, true);
+            itemName(theItem, buf3, false, true, NULL);
+            sprintf(buf, "%s stole %s!", buf2, buf3);
+            messageWithColor(buf, &badMessageColor, false);
+          }
+        }
 			}
 		}
 	}

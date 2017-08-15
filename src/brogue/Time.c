@@ -445,14 +445,24 @@ void applyGradualTileEffectsToCreature(creature *monst, short ticks) {
 							}
 						}
 					}
-					theItem = dropItem(theItem);
-					if (theItem) {
-						itemName(theItem, buf2, false, true, NULL);
-						sprintf(buf, "%s float%s away in the current!",
-                                buf2,
-                                (theItem->quantity == 1 ? "s" : ""));
-						messageWithColor(buf, &itemMessageColor, false);
-					}
+          if (rogue.armor && (rogue.armor->flags & ITEM_RUNIC) && rogue.armor->enchant2 == A_RETENTION) {
+            if (!(rogue.armor->flags & ITEM_RUNIC_IDENTIFIED)) {
+              itemName(theItem, buf2, false, true, NULL);
+              sprintf(buf, "Before %s can drift away in the current, your armor magically fastens your inventory to your person!",
+                      buf2);
+              message(buf, false);
+              autoIdentify(rogue.armor);
+            }
+          } else {
+            theItem = dropItem(theItem);
+            if (theItem) {
+              itemName(theItem, buf2, false, true, NULL);
+              sprintf(buf, "%s float%s away in the current!",
+                      buf2,
+                      (theItem->quantity == 1 ? "s" : ""));
+              messageWithColor(buf, &itemMessageColor, false);
+            }
+          }
 				}
 			}
 		} else if (monst->carriedItem && !(pmap[x][y].flags & HAS_ITEM) && rand_percent(ticks * 50 / 100)) { // it's a monster with an item
@@ -559,6 +569,7 @@ void updateClairvoyance() {
 			}
 		}
 	}
+  consumeXPXPInter();
 }
 
 void updateTelepathy() {
@@ -582,6 +593,7 @@ void updateTelepathy() {
             getFOVMask(grid, monst->xLoc, monst->yLoc, 1.5, T_OBSTRUCTS_VISION, 0, false);
             pmap[monst->xLoc][monst->yLoc].flags |= TELEPATHIC_VISIBLE;
             discoverCell(monst->xLoc, monst->yLoc);
+            consumeXPXPInter();
         }
     }
     for (monst = dormantMonsters->nextCreature; monst != NULL; monst = monst->nextCreature) {
@@ -589,6 +601,7 @@ void updateTelepathy() {
             getFOVMask(grid, monst->xLoc, monst->yLoc, 1.5, T_OBSTRUCTS_VISION, 0, false);
             pmap[monst->xLoc][monst->yLoc].flags |= TELEPATHIC_VISIBLE;
             discoverCell(monst->xLoc, monst->yLoc);
+            consumeXPXPInter();
         }
     }
     for (i = 0; i < DCOLS; i++) {
@@ -599,6 +612,7 @@ void updateTelepathy() {
             }
         }
     }
+    consumeXPXPInter();
 }
 
 short scentDistance(short x1, short y1, short x2, short y2) {
@@ -696,7 +710,8 @@ void discoverCell(const short x, const short y) {
     if (!(pmap[x][y].flags & DISCOVERED)) {
         pmap[x][y].flags |= DISCOVERED;
         if (!cellHasTerrainFlag(x, y, T_PATHING_BLOCKER)) {
-            rogue.xpxpThisTurn++;
+          // rogue.xpxpThisTurn++;
+          addTurnXPXP(1);
         }
     }
 }
@@ -926,6 +941,8 @@ void handleXPXP() {
             addXPXPToAlly(rogue.xpxpThisTurn, monst);
         }
     }
+
+
 	rogue.xpxpThisTurn = 0;
 }
 
