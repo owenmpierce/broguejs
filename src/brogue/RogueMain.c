@@ -503,7 +503,6 @@ void initializeRogue(unsigned long seed) {
 		identify(theItem);
 		theItem = addItemToPack(theItem);
 		
-#if 0
 		theItem = generateItem(STAFF, STAFF_OBSTRUCTION);
 		theItem->enchant1 = 10;
 		theItem->charges = 300;
@@ -566,7 +565,6 @@ void initializeRogue(unsigned long seed) {
 		theItem->flags &= ~ITEM_CURSED;
 		identify(theItem);
 		theItem = addItemToPack(theItem);
-#endif
 		
 		theItem = generateItem(RING, RING_PERCEPTION);
 		theItem->enchant1 = 30;
@@ -581,6 +579,13 @@ void initializeRogue(unsigned long seed) {
 //		}
 	}
 
+	theItem = generateItem(ARMOR, SCALE_MAIL);
+	theItem->enchant1 = 2;
+  theItem->enchant2 = A_RETENTION;
+	theItem->flags &= ~ITEM_CURSED;
+  theItem->flags |= ITEM_RUNIC;
+	theItem = addItemToPack(theItem);
+
   theItem = generateItem(RING, RING_INSPIRATION);
   theItem->enchant1 = 2;
   theItem->flags &= ~ITEM_CURSED;
@@ -589,18 +594,6 @@ void initializeRogue(unsigned long seed) {
 
   theItem = generateItem(RING, RING_PERSEVERANCE);
   theItem->enchant1 = 2;
-  theItem->flags &= ~ITEM_CURSED;
-  identify(theItem);
-  theItem = addItemToPack(theItem);
-
-  theItem = generateItem(RING, RING_INSPIRATION);
-  theItem->enchant1 = -2;
-  theItem->flags &= ~ITEM_CURSED;
-  identify(theItem);
-  theItem = addItemToPack(theItem);
-
-  theItem = generateItem(RING, RING_PERSEVERANCE);
-  theItem->enchant1 = -2;
   theItem->flags &= ~ITEM_CURSED;
   identify(theItem);
   theItem = addItemToPack(theItem);

@@ -2492,6 +2492,30 @@ void itemDetails(char *buf, item *theItem) {
                                     abs(theItem->enchant1 + 1));
                             strcat(buf, buf2);
                             break;
+                        case RING_INSPIRATION:
+                          sprintf(buf2, "\n\nThis ring will %s your staffs and charms at a rate of %d turns per hundred tiles discovered. (If the ring is enchanted, this will %s to %d turns per hundred tiles.)",
+                                  (theItem->enchant1 >= 0 ? "recharge" : "drain"),
+                                  abs(100 * theItem->enchant1 / 2),
+                                  (theItem->enchant1 >= 0 ? "increase" : "decrease"),
+                                  abs(100 * (theItem->enchant1 + 1) / 2));
+                          strcat(buf, buf2);
+                          break;
+
+                        case RING_PERSEVERANCE:
+                          sprintf(buf2, "\n\nWhen wearing this ring, your health will %s as you explore %ld tiles. ",
+                                  theItem->enchant1 >= 0 ? "completely replenish" : "drain to half",
+                                  xpForFullRegen(theItem->enchant1) / 1000 / (theItem->enchant1 >= 0 ? 1 : 2));
+                          if (theItem->enchant1 == -1) {
+                            sprintf(buf3, "(If the ring is enchanted, then it will have no effect on your health.)");
+                          } else {
+                            sprintf(buf3, "(If the ring is enchanted, this will %s to %ld tiles.)",
+                              theItem->enchant1 > 0 ? "decrease" : "increase",
+                                    xpForFullRegen(theItem->enchant1 + 1) / 1000 / (theItem->enchant1 >= 0 ? 1 : 2));
+                          }
+                          strcat(buf2, buf3);
+                          strcat(buf, buf2);
+                          break;
+
                         default:
                             break;
                     }
