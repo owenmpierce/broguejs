@@ -2406,7 +2406,7 @@ void consumeXPXPInter() {
         player.currentHP -= hp;
         player.currentHP = clamp(player.currentHP, player.info.maxHP / 2, player.info.maxHP);
       }
-      DEBUG printf("\nmXP: %i, hp: %s%i, mXPRem: %i, mXPperHP: %i, pAccum: %i", mXP, rogue.perseverance<0? "-":"", hp, mXPRem, mXPperHP, rogue.perseveranceAccum);
+      // DEBUG printf("\nmXP: %i, hp: %s%i, mXPRem: %i, mXPperHP: %i, pAccum: %i", mXP, rogue.perseverance<0? "-":"", hp, mXPRem, mXPperHP, rogue.perseveranceAccum);
     } else {
       // Take off the ring and you lose the effect
       rogue.perseveranceAccum = 0;
