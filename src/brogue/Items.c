@@ -4260,6 +4260,19 @@ boolean updateBolt(bolt *theBolt, creature *caster, short x, short y,
                     teleport(monst, -1, -1, false);
                 }
                 break;
+            case BE_TRANSPOSITION:
+              printf("\n\nhit");
+              if (!(monst->info.flags & MONST_IMMOBILE)) {
+                if (monst->bookkeepingFlags & MB_CAPTIVE) {
+                  freeCaptive(monst);
+                }
+                transpose(caster, monst);
+
+                if (autoID) {
+                  *autoID = true;
+                }
+              }
+              break;
             case BE_BECKONING:
                 if (!(monst->info.flags & MONST_IMMOBILE)
                     && caster
@@ -4274,6 +4287,7 @@ boolean updateBolt(bolt *theBolt, creature *caster, short x, short y,
                     }
                 }
                 break;
+
             case BE_SLOW:
                 slow(monst, theBolt->magnitude * 5);
                 if (boltCatalog[BOLT_SLOW].backColor) {
@@ -4406,6 +4420,7 @@ boolean updateBolt(bolt *theBolt, creature *caster, short x, short y,
                 if (!(monst->info.flags & (MONST_INANIMATE | MONST_INVULNERABLE))) {
                     newMonst = cloneMonster(monst, true, true);
                     if (newMonst) {
+                      unAlly(monst); // Sorry, no cheap dragon allies.
                         newMonst->currentHP = (newMonst->currentHP + 1) / 2;
                         monst->currentHP = (monst->currentHP + 1) / 2;
                         if (boltCatalog[BOLT_PLENTY].backColor) {

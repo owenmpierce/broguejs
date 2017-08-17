@@ -802,9 +802,10 @@ enum wandKind {
 	WAND_NEGATION,
 	WAND_DOMINATION,
 	WAND_BECKONING,
+  WAND_TRANSPOSITION,
 	WAND_PLENTY,
 	WAND_INVISIBILITY,
-  //WAND_EMPOWERMENT,
+  WAND_EMPOWERMENT,
 	NUMBER_WAND_KINDS
 };
 
@@ -833,6 +834,7 @@ enum boltType {
 	BOLT_NEGATION,
 	BOLT_DOMINATION,
 	BOLT_BECKONING,
+  BOLT_TRANSPOSITION,
 	BOLT_PLENTY,
 	BOLT_INVISIBILITY,
     BOLT_EMPOWERMENT,
@@ -1739,6 +1741,7 @@ enum boltEffects {
     BE_NEGATION,
     BE_DOMINATION,
     BE_BECKONING,
+    BE_TRANSPOSITION,
     BE_PLENTY,
     BE_INVISIBILITY,
     BE_EMPOWERMENT,
@@ -2905,6 +2908,7 @@ extern "C" {
 	void moralAttack(creature *attacker, creature *defender);
 	short runicWeaponChance(item *theItem, boolean customEnchantLevel, float enchantLevel);
 	void magicWeaponHit(creature *defender, item *theItem, boolean backstabbed);
+  void transpose(creature *target, creature *caster);
     void teleport(creature *monst, short x, short y, boolean respectTerrainAvoidancePreferences);
 	void chooseNewWanderDestination(creature *monst);
 	boolean canPass(creature *mover, creature *blocker);

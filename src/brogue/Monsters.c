@@ -1043,6 +1043,36 @@ void spawnPeriodicHorde() {
     }
 }
 
+void transpose(creature *target, creature *caster) {
+  creature *creatures[2] = {target, caster};
+  short pos[][2] = {{caster->xLoc, caster->yLoc}, {target->xLoc, target->yLoc}};
+
+  for (int i = 0; i < 2; i++) {
+    creature *monst = creatures[i];
+    monst->bookkeepingFlags &= ~(MB_SEIZED | MB_SEIZING);
+    if (monst == &player) {
+      pmap[player.xLoc][player.yLoc].flags &= ~HAS_PLAYER;
+      refreshDungeonCell(player.xLoc, player.yLoc);
+      monst->xLoc = pos[i][0];
+      monst->yLoc = pos[i][1];
+      pmap[player.xLoc][player.yLoc].flags |= HAS_PLAYER;
+      updateVision(true);
+      // get any items at the destination location
+      if (pmap[player.xLoc][player.yLoc].flags & HAS_ITEM) {
+        pickUpItemAt(player.xLoc, player.yLoc);
+      }
+    } else {
+      pmap[monst->xLoc][monst->yLoc].flags &= ~HAS_MONSTER;
+      refreshDungeonCell(monst->xLoc, monst->yLoc);
+      monst->xLoc = pos[i][0];
+      monst->yLoc = pos[i][1];
+      pmap[monst->xLoc][monst->yLoc].flags |= HAS_MONSTER;
+      chooseNewWanderDestination(monst);
+    }
+    refreshDungeonCell(monst->xLoc, monst->yLoc);
+  }
+}
+
 // x and y are optional.
 void teleport(creature *monst, short x, short y, boolean respectTerrainAvoidancePreferences) {
 	short **grid, i, j;
@@ -2420,6 +2450,9 @@ boolean specificallyValidBoltTarget(creature *caster, creature *target, enum bol
     
     // Rules specific to bolt effects:
     switch (boltCatalog[theBoltType].boltEffect) {
+        case BE_TRANSPOSITION:
+          return false;
+
         case BE_BECKONING:
             if (distanceBetween(caster->xLoc, caster->yLoc, target->xLoc, target->yLoc) <= 1) {
                 return false;

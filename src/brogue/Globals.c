@@ -102,6 +102,7 @@ const color descentBoltColor =      {-40,   -40,    -40,    0,      0,          
 const color discordColor =			{25,	0,		25,		66,		0,			0,			0,		true};
 const color poisonColor =			{0,		0,		0,		10,		50,			10,			0,		true};
 const color beckonColor =			{10,	10,		10,		5,		5,			5,			50,		true};
+const color transpositionColor =			{10,	10,		10,		5,		5,			5,			50,		true};
 const color invulnerabilityColor =	{25,	0,		25,		0,		0,			66,			0,		true};
 const color dominationColor =		{0,		0,		100,	80,		25,			0,			0,		true};
 const color empowermentColor =		{30,    100,	40,     25,		80,			25,			0,		true};
@@ -1120,7 +1121,7 @@ const blueprint blueprintCatalog[NUMBER_BLUEPRINTS] = {
 	{{1, 12},           {30, 50},	30,		6,			0,                  (BP_ROOM | BP_PURGE_INTERIOR | BP_SURROUND_WITH_WALLS | BP_OPEN_INTERIOR | BP_IMPREGNABLE | BP_REWARD),	{
 		{0,			CARPET,		DUNGEON,		{0,0},		0,			0,			-1,			0,				0,				0,			0,			(MF_EVERYWHERE)},
 		{0,			0,          0,              {1,1},		1,			0,          0,          0,				2,				0,			0,          (MF_BUILD_AT_ORIGIN | MF_PERMIT_BLOCKING | MF_BUILD_VESTIBULE)},
-		// {0,			ALTAR_CAGE_OPEN,DUNGEON,	{1,1},		1,			WAND,       WAND_EMPOWERMENT, 0,		2,				0,			(ITEM_IS_KEY | ITEM_KIND_AUTO_ID | ITEM_PLAYER_AVOIDS),	(MF_GENERATE_ITEM | MF_TREAT_AS_BLOCKING | MF_IMPREGNABLE)},
+		{0,			ALTAR_CAGE_OPEN,DUNGEON,	{1,1},		1,			WAND,       WAND_EMPOWERMENT, 0,		2,				0,			(ITEM_IS_KEY | ITEM_KIND_AUTO_ID | ITEM_PLAYER_AVOIDS),	(MF_GENERATE_ITEM | MF_TREAT_AS_BLOCKING | MF_IMPREGNABLE)},
         {0,			ALTAR_CAGE_OPEN,DUNGEON,	{3,3},		3,			(WEAPON|ARMOR|WAND),-1,	0,				2,				0,			(ITEM_IS_KEY | ITEM_KIND_AUTO_ID | ITEM_PLAYER_AVOIDS),	(MF_GENERATE_ITEM | MF_NO_THROWING_WEAPONS | MF_TREAT_AS_BLOCKING | MF_IMPREGNABLE)},
 		{0,			ALTAR_CAGE_OPEN,DUNGEON,	{2,3},		2,			(STAFF|RING|CHARM),-1,	0,				2,				0,			(ITEM_IS_KEY | ITEM_KIND_AUTO_ID | ITEM_MAX_CHARGES_KNOWN | ITEM_PLAYER_AVOIDS),	(MF_GENERATE_ITEM | MF_NO_THROWING_WEAPONS | MF_TREAT_AS_BLOCKING | MF_IMPREGNABLE)},
         {0,			STATUE_INERT,DUNGEON,		{2,3},		0,			0,			-1,			0,				2,				0,          0,          (MF_TREAT_AS_BLOCKING | MF_BUILD_IN_WALLS | MF_IMPREGNABLE)}}},
@@ -2412,13 +2413,14 @@ itemTable potionTable[NUMBER_POTION_KINDS] = {
 itemTable wandTable[NUMBER_WAND_KINDS] = {
 	{"teleportation",	itemMetals[0], "",	3,	800,	BOLT_TELEPORT,      {3,5,1}, false, false, "A blast from this wand will teleport a creature to a random place on the level. This can be particularly effective against aquatic or mud-bound creatures, which are helpless on dry land."},
 	{"slowness",		itemMetals[1], "",	3,	800,	BOLT_SLOW,          {2,5,1}, false, false, "This wand will cause a creature to move at half its ordinary speed for 30 turns."},
-	{"polymorphism",	itemMetals[2], "",	3,	700,	BOLT_POLYMORPH,     {3,5,1}, false, false, "This mischievous magic can transform any creature into another creature at random. Beware: the tamest of creatures might turn into the most fearsome. The horror of the transformation will turn any affected allies against you."},
+	{"polymorphism",	itemMetals[2], "",	3,	700,	BOLT_POLYMORPH,     {3,5,1}, false, false, "This mischievous magic can transform any creature into another, less powerful creature. The horror of the transformation will turn any affected allies against you."},
 	{"negation",		itemMetals[3], "",	3,	550,	BOLT_NEGATION,      {4,6,1}, false, false, "This powerful anti-magic will strip a creature of a host of magical traits, including flight, invisibility, acidic corrosiveness, telepathy, magical speed or slowness, hypnosis, magical fear, immunity to physical attack, fire resistance and the ability to blink. Spellcasters will lose their magical abilities and magical totems will be rendered inert. Creatures animated purely by magic will die."},
 	{"domination",		itemMetals[4], "",	1,	1000,	BOLT_DOMINATION,    {1,2,1}, false, false, "This wand can forever bind an enemy to the caster's will, turning it into a steadfast ally. However, the magic works only against enemies that are near death."},
 	{"beckoning",		itemMetals[5], "",	3,	500,	BOLT_BECKONING,     {2,4,1}, false, false, "The force of this wand will yank the targeted creature into direct proximity."},
-	{"plenty",			itemMetals[6], "",	2,	700,	BOLT_PLENTY,        {1,2,1}, false, false, "The creature at the other end of this mischievous bit of metal will be beside itself -- literally! Cloning an enemy is ill-advised, but the effect can be invaluable on a powerful ally."},
-	{"invisibility",	itemMetals[7], "",	3,	100,	BOLT_INVISIBILITY,  {3,5,1}, false, false, "A charge from this wand will render a creature temporarily invisible to the naked eye. Only with telepathy or in the silhouette of a thick gas will an observer discern the creature's hazy outline."},
-  // {"empowerment",     itemMetals[8], "",	2,	100,	BOLT_EMPOWERMENT,   {1,1,1}, false, false, "This sacred magic will permanently improve the mind and body of any monster it hits. A wise adventurer will use it on allies, making them stronger in combat and able to learn a new talent from a fallen foe. If the bolt is reflected back at you, it will have no effect."},
+	{"transposition",		itemMetals[6], "",	3,	500,	BOLT_TRANSPOSITION,     {2,4,1}, false, false, "The bolt from this wand will cause the caster and its target creature to swap places."},
+	{"plenty",			itemMetals[7], "",	3,	700,	BOLT_PLENTY,        {3,5,1}, false, false, "The creature at the other end of this mischievous bit of metal will be beside itself -- literally! Though the clone of an ally will always turn hostile, the health of both creatures will be halved, so there might be some use for this seemingly treacherous wand."},
+	{"invisibility",	itemMetals[8], "",	3,	100,	BOLT_INVISIBILITY,  {3,5,1}, false, false, "A charge from this wand will render a creature temporarily invisible to the naked eye. Only with telepathy or in the silhouette of a thick gas will an observer discern the creature's hazy outline."},
+  {"empowerment",     itemMetals[9], "",	2,	100,	BOLT_EMPOWERMENT,   {1,1,1}, false, false, "This sacred magic will permanently improve the mind and body of any monster it hits. A wise adventurer will use it on allies, making them stronger in combat and able to learn a new talent from a fallen foe. If the bolt is reflected back at you, it will have no effect."},
 };
 
 itemTable staffTable[NUMBER_STAFF_KINDS] = {
@@ -2475,6 +2477,7 @@ const bolt boltCatalog[NUMBER_BOLT_KINDS] = {
     {"negation magic",          "casts a negation spell",       "can cast negation",                        0,      NULL,           &pink,              BE_NEGATION,    10,             0,          0,          0,                          (BF_TARGET_ENEMIES)},
     {"domination spell",        "casts a domination spell",     "can dominate other creatures",             0,      NULL,           &dominationColor,   BE_DOMINATION,  10,             0,          0,          MONST_INANIMATE,            (BF_TARGET_ENEMIES)},
     {"beckoning spell",         "casts a beckoning spell",      "can cast beckoning",                       0,      NULL,           &beckonColor,       BE_BECKONING,   10,             0,          0,          MONST_IMMOBILE,             (BF_TARGET_ENEMIES)},
+    {"transposition spell",         "casts a transposition spell",      "can cast transposition",           0,      NULL,           &transpositionColor, BE_TRANSPOSITION,   10,             0,          0,          MONST_IMMOBILE,             (BF_TARGET_ENEMIES)},
     {"spell of plenty",         "casts a spell of plenty",      "can duplicate other creatures",            0,      NULL,           &rainbow,           BE_PLENTY,      10,             0,          0,          MONST_INANIMATE,            (BF_TARGET_ALLIES | BF_NOT_LEARNABLE)},
     {"invisibility magic",      "casts invisibility magic",     "can turn creatures invisible",             0,      NULL,           &darkBlue,          BE_INVISIBILITY, 10,            0,          0,          MONST_INANIMATE,            (BF_TARGET_ALLIES)},
     {"empowerment sorcery",     "casts empowerment",            "can cast empowerment",                     0,      NULL,           &empowermentColor,  BE_EMPOWERMENT, 10,             0,          0,          MONST_INANIMATE,            (BF_TARGET_ALLIES | BF_NOT_LEARNABLE)},
