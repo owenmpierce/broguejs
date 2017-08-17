@@ -565,6 +565,12 @@ void initializeRogue(unsigned long seed) {
 		theItem->flags &= ~ITEM_CURSED;
 		identify(theItem);
 		theItem = addItemToPack(theItem);
+
+		theItem = generateItem(WAND, WAND_TRANSPOSITION);
+		theItem->charges = 300;
+		theItem->flags &= ~ITEM_CURSED;
+		identify(theItem);
+		theItem = addItemToPack(theItem);
 		
 		theItem = generateItem(RING, RING_PERCEPTION);
 		theItem->enchant1 = 30;
@@ -579,6 +585,7 @@ void initializeRogue(unsigned long seed) {
 //		}
 	}
 
+  #if 0
 	theItem = generateItem(ARMOR, SCALE_MAIL);
 	theItem->enchant1 = 2;
   theItem->enchant2 = A_RETENTION;
@@ -618,6 +625,7 @@ void initializeRogue(unsigned long seed) {
   theItem->flags &= ~ITEM_CURSED;
   identify(theItem);
   theItem = addItemToPack(theItem);
+  #endif
 
 	blackOutScreen();
 	welcome();
